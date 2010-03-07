@@ -17,6 +17,7 @@ class Folio
 	var $set_lookup;
 	var $collection_lookup;
 	var $page;
+	var $cached;
 	
 	// var $key = FLICKR_KEY;
 	// var $secret_key = FLICKR_SECRET_KEY;
@@ -27,7 +28,7 @@ class Folio
 	function __construct()
 	{
 		$this->api = new FlickrCache();
-		// $this->api->cache_mode(true, 6400, './app/_cache/');
+		$this->api->cache_mode(true, 6400, './app/cache/');
 		
 		$this->get_tree();
 		$this->get_set_lookup();
@@ -61,11 +62,18 @@ class Folio
 			return false;
 		}
 		
+		if (isset($response->_cached))
+			$this->cached = (bool) $response->_cached;
+		
 		return true;
 	}
 	
 	public function get_set_lookup($tree=false, $parent=array())
 	{
+		if ($this->cached) {
+			// Try to load cache if tree is false, and parent is empty
+		}
+		
 		if (!$tree) $tree = & $this->tree;
 		$function = __FUNCTION__;
 		
@@ -85,11 +93,17 @@ class Folio
 				$this->set_lookup[$set->id] = $parent;
 		}
 		
+		// Save Cache if tree is false parent is empty
+		
 		return true;
 	}
 
 	public function get_collection_lookup($tree=false)
 	{
+		if ($this->cached) {
+			// Try to load cache if tree is false
+		}
+		
 		if (!$tree) $tree = & $this->tree;
 		$function = __FUNCTION__;
 		
@@ -107,10 +121,12 @@ class Folio
 				$this->collection_lookup[$tree->id][$set->id] = true;
 		}
 		
+		// Save Cache if tree is false
+		
 		return true;
 	}	
 
-	public function get_menu($tree=false, $parent=array(), $level=0)
+	public function get_menu($tree=false, $level=0)
 	{
 		if (!$tree) $tree = & $this->tree;
 		$function = __FUNCTION__;
@@ -140,7 +156,7 @@ class Folio
 		if (property_exists($tree,'collection'))
 		{
 			foreach ($tree->collection as $collection)
-				 $output .= $this->$function($collection, $parent, $level);
+				 $output .= $this->$function($collection, $level);
 		}
 		elseif (property_exists($tree,'set'))
 		{
@@ -186,7 +202,7 @@ class Folio
 
 
 $folio = new Folio;
-// var_dump($folio);
+var_dump($folio);
 
 ?>
 <style type="text/css" media="screen">
