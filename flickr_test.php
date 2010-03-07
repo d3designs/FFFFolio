@@ -14,7 +14,8 @@ class Folio
 {
 	var $api;
 	var $tree;
-	var $breadcrumb;
+	var $set_lookup;
+	var $collection_lookup;
 	var $page;
 	
 	// var $key = FLICKR_KEY;
@@ -28,16 +29,21 @@ class Folio
 		$this->api = new FlickrCache();
 		// $this->api->cache_mode(true, 6400, './app/_cache/');
 		
+		$this->get_tree();
+		$this->get_set_lookup();
+		
 		if (isset($_GET['page']))
 			$this->page = preg_replace('/[^0-9\-]/', '', $_GET['page']);
 		
-		if (strpos($this->page, '-')) {
-			
-			
+		// If the page contains a dash, it is a collection,
+		// so we can grab the first set under that collection.
+		if (strpos($this->page, '-'))
+		{
+			$this->get_collection_lookup();
+			if (isset($this->collection_lookup[$this->page]))
+				$this->page = key($this->collection_lookup[$this->page]);
 		}
 		
-		$this->get_tree();
-		$this->get_breadcrumb();
 	}
 	
 	public function get_tree()
@@ -58,7 +64,7 @@ class Folio
 		return true;
 	}
 	
-	public function get_breadcrumb($tree=false, $parent=array())
+	public function get_set_lookup($tree=false, $parent=array())
 	{
 		if (!$tree) $tree = & $this->tree;
 		$function = __FUNCTION__;
@@ -76,12 +82,33 @@ class Folio
 		elseif (property_exists($tree,'set'))
 		{
 			foreach ($tree->set as $set)
-				$this->breadcrumb[$set->id] = $parent;
+				$this->set_lookup[$set->id] = $parent;
 		}
 		
 		return true;
 	}
-	
+
+	public function get_collection_lookup($tree=false)
+	{
+		if (!$tree) $tree = & $this->tree;
+		$function = __FUNCTION__;
+		
+		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
+			return false;
+
+		if (property_exists($tree,'collection'))
+		{
+			foreach ($tree->collection as $collection)
+				$this->$function($collection);
+		}
+		elseif (property_exists($tree,'set'))
+		{
+			foreach ($tree->set as $set)
+				$this->collection_lookup[$tree->id][$set->id] = true;
+		}
+		
+		return true;
+	}	
 
 	public function get_menu($tree=false, $parent=array(), $level=0)
 	{
@@ -101,7 +128,7 @@ class Folio
 		// Skip the parent collection
 		if ($level > 1 || property_exists($tree,'set'))
 		{
-			if (!empty($this->page) && isset($this->breadcrumb[$this->page][$tree->id]) || $this->page == $tree->id)
+			if (!empty($this->page) && isset($this->set_lookup[$this->page][$tree->id]) || $this->page == $tree->id)
 				$output .= "$tab<li class=\"collection active\">";
 			else
 				$output .= "$tab<li class=\"collection\">";
@@ -119,7 +146,7 @@ class Folio
 		{
 			foreach ($tree->set as $set)
 			{
-				if (!empty($this->page) && isset($this->breadcrumb[$this->page][$set->id]) || $this->page == $set->id)
+				if (!empty($this->page) && isset($this->set_lookup[$this->page][$set->id]) || $this->page == $set->id)
 					$output .= "$tab\t\t<li class=\"set active\">";
 				else
 					$output .= "$tab\t\t<li class=\"set\">";
