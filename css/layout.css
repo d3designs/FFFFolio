@@ -1,7 +1,20 @@
-/* @override http://localhost/OrphanElliott/www/css/layout.css */
+/* @override 
+	http://localhost/OrphanElliott/www/css/layout.css
+	http://localhost/orphanElliott/www/css/layout.css
+*/
+
+/*html{
+	overflow-y: scroll;
+}*/
+
+html, body{
+	width: 100%;
+	height: 100%;
+}
 
 body {
 	font: 10px/1.5 Futura, Helvetica, Arial, "Liberation Sans", FreeSans, sans-serif;
+	width: 13500px;
 }
 
 body, a {
@@ -58,7 +71,6 @@ body, a {
 }
 
 #items {
-	width: 13500px;
 	margin-top: auto;
 	margin-bottom: auto;
 }

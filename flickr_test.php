@@ -202,7 +202,7 @@ class Folio
 
 
 $folio = new Folio;
-var_dump($folio);
+// var_dump($folio);
 
 ?>
 <style type="text/css" media="screen">

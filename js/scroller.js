@@ -19,9 +19,8 @@ window.addEvent('domready', function() {
 	
 	items = $$('.item');
 	
-	// Set the width of the items wrapper, depending on the number of contents
-	
-	$('items').setStyle('width', (items.length * 540 + (screen.width - 540)) );
+	// Set the page body width, depending on the number of contents
+	document.body.setStyle('width', (items.length * 540 + (screen.width - 540)) );
 	
 	scroller = new Fx.Scroll(window, {
 		link: 'cancel',
@@ -31,13 +30,12 @@ window.addEvent('domready', function() {
 		}
 	});
 	
-	
-	document.addEvent('mousewheel', function(event){
+	window.addEvent('mousewheel', function(event){
 		
 		event.stop();
 		
 		var current = window.getScroll();
-		var step = current.x + (event.wheel / 3) * -120;
+		var step = current.x + (event.wheel / 3) * -30;
 		
 		scroller.set(step, current.y);
 	});
