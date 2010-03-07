@@ -31,6 +31,17 @@ window.addEvent('domready', function() {
 		}
 	});
 	
+	
+	document.addEvent('mousewheel', function(event){
+		
+		event.stop();
+		
+		var current = window.getScroll();
+		var step = current.x + (event.wheel / 3) * -120;
+		
+		scroller.set(step, current.y);
+	});
+	
 	// Possibly use the mootols element method ".isVisible()"?
 
 	document.addEvent('keydown', function(event){
