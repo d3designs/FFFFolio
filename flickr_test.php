@@ -24,11 +24,17 @@ function get($collection_id=FLICKR_COLLECTION_ID)
 
 $data = get();
 
-var_dump($data->collection);
-echo "<pre>";
+$breadcrumb = array();
 
-function process($class,$level=0)
+// var_dump($data->collection);
+// echo "<pre>";
+
+
+function process($class,$level=0,$parent=array())
 {
+	global $breadcrumb;
+	// $breadcrumb = array();
+	
 	if (property_exists($class,'collection')) {
 		
 		$indent = '';
@@ -37,12 +43,16 @@ function process($class,$level=0)
 			$indent .= "\t";
 		}
 		
-		echo "$indent$class->title\n";
+		echo "$indent<li><a href=\"$class->id\">$class->title</a>\n$indent\t<ul>\n";
 		$level++;
 		
+		$parent[] = $class->id;
+		
 		foreach ($class->collection as $collection) {
-			process($collection,$level);
+			process($collection,$level,$parent);
 		}
+		
+		echo "$indent\t</ul>\n$indent</li>\n";
 	
 	}elseif (property_exists($class,'set')) {
 		
@@ -52,13 +62,17 @@ function process($class,$level=0)
 			$indent .= "\t";
 		}
 		
-		echo "$indent$class->title\n";
-		
-		$indent .= "\t";
+		echo "$indent<li><a href=\"$class->id\">$class->title</a>\n$indent\t<ul>\n";
+		$parent[] = $class->id;
+		// $indent .= "\t";
 		
 		foreach ($class->set as $set) {
-			echo "$indent$set->title\n";
+			echo "$indent\t\t<li><a href=\"$set->id\">$set->title</a></li>\n";
+			
+			$breadcrumb[$set->id] = $parent;
 		}
+		
+		echo "$indent\t</ul>\n$indent</li>\n";
 	}
 	
 	
@@ -69,10 +83,16 @@ function process($class,$level=0)
 	// 		echo "\t$collection->title\n";
 	// 	}
 	// }
+	
+	// return $breadcrumb;
 }
 
+echo "<ul>\n";
 process($data);
+echo "</ul>\n";
+
+print_r($breadcrumb);
 
 
-echo "</pre>";
+// echo "</pre>";
 ?>
