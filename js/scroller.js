@@ -35,7 +35,7 @@ window.addEvent('domready', function() {
 		event.stop();
 		
 		var current = window.getScroll();
-		var step = current.x + (event.wheel / 3) * -30;
+		var step = current.x + (event.wheel / 3) * -60;
 		
 		scroller.set(step, current.y);
 	});
