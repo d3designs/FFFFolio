@@ -1,98 +1,160 @@
 <?php
 
-error_reporting(E_ALL);
+// error_reporting(E_ALL);
 
+include 'app/config.inc.php';
 include 'app/requestcore.class.php';
 include 'app/flickr.class.php';
 include 'app/flickrcache.class.php';
 
-$flickr = new FlickrCache();
-// $flickr->cache_mode(true, 6400, './app/_cache/');
-
-function get($collection_id=FLICKR_COLLECTION_ID)
+/**
+* My Flickr Folio
+*/
+class Folio
 {
-	global $flickr;
+	var $api;
+	var $tree;
+	var $breadcrumb;
+	var $page;
 	
-	$response = $flickr->collections->get_tree(array(
-		'collection_id' => $collection_id,
-		'user_id' => FLICKR_USER_ID,
-	));
+	// var $key = FLICKR_KEY;
+	// var $secret_key = FLICKR_SECRET_KEY;
+	var $user_id = FLICKR_USER_ID;
+	var $collection_id = FLICKR_COLLECTION_ID;
 	
-	return $collection = $response->collections->collection[0];
-}
-
-
-$data = get();
-
-$breadcrumb = array();
-
-// var_dump($data->collection);
-// echo "<pre>";
-
-
-function process($class,$level=0,$parent=array())
-{
-	global $breadcrumb;
-	// $breadcrumb = array();
 	
-	if (property_exists($class,'collection')) {
+	function __construct()
+	{
+		$this->api = new FlickrCache();
+		// $this->api->cache_mode(true, 6400, './app/_cache/');
 		
-		$indent = '';
+		if (isset($_GET['page']))
+			$this->page = preg_replace('/[^0-9\-]/', '', $_GET['page']);
 		
-		for ($i=0; $i < $level; $i++) { 
-			$indent .= "\t";
-		}
-		
-		echo "$indent<li><a href=\"$class->id\">$class->title</a>\n$indent\t<ul>\n";
-		$level++;
-		
-		$parent[] = $class->id;
-		
-		foreach ($class->collection as $collection) {
-			process($collection,$level,$parent);
-		}
-		
-		echo "$indent\t</ul>\n$indent</li>\n";
-	
-	}elseif (property_exists($class,'set')) {
-		
-		$indent = '';
-		
-		for ($i=0; $i < $level; $i++) { 
-			$indent .= "\t";
-		}
-		
-		echo "$indent<li><a href=\"$class->id\">$class->title</a>\n$indent\t<ul>\n";
-		$parent[] = $class->id;
-		// $indent .= "\t";
-		
-		foreach ($class->set as $set) {
-			echo "$indent\t\t<li><a href=\"$set->id\">$set->title</a></li>\n";
+		if (strpos($this->page, '-')) {
 			
-			$breadcrumb[$set->id] = $parent;
+			
 		}
 		
-		echo "$indent\t</ul>\n$indent</li>\n";
+		$this->get_tree();
+		$this->get_breadcrumb();
 	}
 	
+	public function get_tree()
+	{
+		$response = $this->api->collections->get_tree(array(
+			'collection_id' => $this->collection_id,
+			'user_id'       => $this->user_id,
+		));
+		
+		$this->tree = $response->collections->collection[0];
+		
+		if(!property_exists($this->tree,'collection') && !property_exists($this->tree,'set'))
+		{
+			$this->tree = null;
+			return false;
+		}
+		
+		return true;
+	}
 	
-	// foreach ($data->collection as $collection) {
-	// 	if (property_exists($collection,'collection')) {
-	// 		echo "$collection->title\n";
-	// 	}elseif (property_exists($collection,'set')) {
-	// 		echo "\t$collection->title\n";
-	// 	}
-	// }
+	public function get_breadcrumb($tree=false, $parent=array())
+	{
+		if (!$tree) $tree = & $this->tree;
+		$function = __FUNCTION__;
+		
+		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
+			return false;
+		
+		$parent[$tree->id] = true;
+		
+		if (property_exists($tree,'collection'))
+		{
+			foreach ($tree->collection as $collection)
+				$this->$function($collection, $parent);
+		}
+		elseif (property_exists($tree,'set'))
+		{
+			foreach ($tree->set as $set)
+				$this->breadcrumb[$set->id] = $parent;
+		}
+		
+		return true;
+	}
 	
-	// return $breadcrumb;
+
+	public function get_menu($tree=false, $parent=array(), $level=0)
+	{
+		if (!$tree) $tree = & $this->tree;
+		$function = __FUNCTION__;
+		$output   = '';
+		$tab      = '';
+		$level++;
+		
+		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
+			return false;
+		
+		// Add a tab for every level we go down
+		for ($i=1; $i < $level; $i++)
+			$tab .= "\t";
+		
+		// Skip the parent collection
+		if ($level > 1 || property_exists($tree,'set'))
+		{
+			if (!empty($this->page) && isset($this->breadcrumb[$this->page][$tree->id]) || $this->page == $tree->id)
+				$output .= "$tab<li class=\"collection active\">";
+			else
+				$output .= "$tab<li class=\"collection\">";
+
+			$output .= "<a href=\"?page=$tree->id\">$tree->title</a>\n";
+			$output .= "$tab\t<ul>\n";
+		}
+
+		if (property_exists($tree,'collection'))
+		{
+			foreach ($tree->collection as $collection)
+				 $output .= $this->$function($collection, $parent, $level);
+		}
+		elseif (property_exists($tree,'set'))
+		{
+			foreach ($tree->set as $set)
+			{
+				if (!empty($this->page) && isset($this->breadcrumb[$this->page][$set->id]) || $this->page == $set->id)
+					$output .= "$tab\t\t<li class=\"set active\">";
+				else
+					$output .= "$tab\t\t<li class=\"set\">";
+				
+				$output .= "<a href=\"?page=$set->id\">$set->title</a></li>\n";
+			}
+		}
+		
+		// Skip the parent collection
+		if ($level > 1 || property_exists($tree,'set'))
+		{
+			$output .= "$tab\t</ul>\n";
+			$output .= "$tab</li>\n";
+		}
+		
+		return $output;
+	}
+	
 }
 
-echo "<ul>\n";
-process($data);
-echo "</ul>\n";
 
-print_r($breadcrumb);
+$folio = new Folio;
+// var_dump($folio);
 
+?>
+<style type="text/css" media="screen">
+	.active > a{
+		background-color: red;
+	}
+</style>
+	
+<?php
 
-// echo "</pre>";
+echo "<ul id=\"nav\">\n";
+echo $folio->get_menu();
+echo "</ul>";
+
 ?>
