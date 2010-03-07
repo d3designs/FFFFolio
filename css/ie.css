@@ -1,0 +1,36 @@
+/* 
+This file is dedicated to Internet Explorer, 
+every web designer's worst nightmare, 
+especially v6 and earlier. 
+*/
+
+/* @group IE */
+
+html,body{
+	height: 100%;
+	width: 100%;
+}
+
+#sidebar, #footer {
+	position: absolute;
+}
+
+#sidebar {
+	height: 95%;
+}
+
+
+/* Fix IE. Hide from IE Mac \*/
+
+* html ul li {
+	float: left;
+	height: 1%;
+}
+
+* html ul li a {
+	height: 1%;
+}
+
+/* End */
+
+/* @end */

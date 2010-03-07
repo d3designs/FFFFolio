@@ -1,0 +1,129 @@
+/* @override http://localhost/OrphanElliott/www/css/layout.css */
+
+body {
+	font: 10px/1.5 Futura, Helvetica, Arial, "Liberation Sans", FreeSans, sans-serif;
+}
+
+body, a {
+	color: #333;
+}
+
+#sidebar, #footer {
+	width: 190px;
+	position: fixed;
+}
+
+#content {
+	margin-left: 230px;
+	padding-top: 20px;
+}
+
+#sidebar {
+	top: 0;
+	left: 0;
+	height: 100%;
+	text-transform: uppercase;
+	padding-left: 20px;
+	background-color: #fff;
+	padding-top: 20px;
+	padding-right: 20px;
+}
+
+#logo {
+	margin-bottom: 20px;
+}
+
+#tagline {
+	display: none;
+}
+
+#footer {
+	bottom: 0;
+	text-align: center;
+	padding-bottom: 20px;
+	font-size: 8px;
+}
+
+#project {
+	text-transform: uppercase;
+}
+
+#project h2 {
+	font-size: 10px;
+}
+
+#project .description {
+	color: #808080;
+	margin-bottom: 5px;
+}
+
+#items {
+	width: 13500px;
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+#items .item {
+	width: 500px;
+	float: left;
+	margin-right: 40px;
+}
+
+ul li {
+	position: relative;
+	text-align: right;
+}
+
+ul, hr {
+	width: 85px;
+	margin-left: 7px;
+}
+
+hr {
+	text-align: left;
+}
+
+li ul {
+	position: absolute;
+	left: 84px;
+	margin-left: 0;
+	display: none;
+	top: 0;
+	width: 99px;
+}
+
+/* Display active menu, by default */
+
+li.active > ul {
+	display: block;
+}
+
+ul li a {
+	display: block;
+	text-decoration: none;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+ul li.active > a,
+ul li a:hover {
+	font-style: italic;
+}
+
+li ul li a {
+	text-align: left;
+	color: #808080;
+	padding-left: 20px;
+}
+
+li:hover > ul, li.over > ul {
+	display: block;
+}
+
+ul:hover li.active > ul {
+	display: none;
+}
+
+ul li.active:hover > ul {
+	display: block;
+}
