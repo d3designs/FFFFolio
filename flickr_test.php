@@ -133,7 +133,7 @@ class Folio
 			else
 				$output .= "$tab<li class=\"collection\">";
 
-			$output .= "<a href=\"?page=$tree->id\">$tree->title</a>\n";
+			$output .= "<a href=\"?page=$tree->id&/".$this->slugify($tree->title)."\">$tree->title</a>\n";
 			$output .= "$tab\t<ul>\n";
 		}
 
@@ -151,7 +151,7 @@ class Folio
 				else
 					$output .= "$tab\t\t<li class=\"set\">";
 				
-				$output .= "<a href=\"?page=$set->id\">$set->title</a></li>\n";
+				$output .= "<a href=\"?page=$set->id&/".$this->slugify($set->title)."\">$set->title</a></li>\n";
 			}
 		}
 		
@@ -164,6 +164,23 @@ class Folio
 		
 		return $output;
 	}
+	
+	public function slugify($value='')
+	{
+		$find = $replace = array();
+		
+		$find[] = '/[\/\-\_& ]+/';
+		$replace[] = '-';
+		
+		$find[] = '/[^0-9a-z\-\_]/';
+		$replace[] = '';
+		
+		$find[] = '/\-+/';
+		$replace[] = '-';
+		
+		return preg_replace($find, $replace, strtolower($value));
+	}
+	
 	
 }
 
