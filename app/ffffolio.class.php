@@ -27,7 +27,8 @@ class FFFFolio
 	
 	function __construct()
 	{
-		$this->path = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
+		$this->path = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
+		$this->path = rtrim($this->path,'/') . '/';
 		
 		$this->api = new FlickrCache();
 		
