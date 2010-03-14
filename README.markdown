@@ -32,19 +32,19 @@ Files located under the `images/` directory are copyright Mat Hudson and can not
 ### FFFFolio
 
 URL: <http://github.com/jaywilliams/FFFFolio>  
-Copyright (c) 2010, Jay Williams [New BSD license](http://opensource.org/licenses/bsd-license.php)
+Copyright (c) 2010, Jay Williams [Simplified BSD License](http://opensource.org/licenses/bsd-license.php)
 
 ### Flickr Class
 
 URL: <http://github.com/skyzyx/flickr>  
-Copyright (c) 2009, Ryan Parman [New BSD license](http://opensource.org/licenses/bsd-license.php)
+Copyright (c) 2009, Ryan Parman [Simplified BSD License](http://opensource.org/licenses/bsd-license.php)
 
 ### FlickrCache Class
 
 URL: <http://github.com/jaywilliams/flickr>  
-Copyright (c) 2009, Jay Williams [New BSD license](http://opensource.org/licenses/bsd-license.php)
+Copyright (c) 2009, Jay Williams [Simplified BSD License](http://opensource.org/licenses/bsd-license.php)
 
 ### RequestCore Class
 
 URL: <http://github.com/skyzyx/requestcore>  
-Copyright (c) 2009, LifeNexus Digital, Inc., and contributors. [New BSD license](http://opensource.org/licenses/bsd-license.php)
+Copyright (c) 2009, LifeNexus Digital, Inc., and contributors. [Simplified BSD License](http://opensource.org/licenses/bsd-license.php)
