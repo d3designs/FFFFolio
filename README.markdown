@@ -19,6 +19,8 @@ Fantastic no-Frills Flickr Folio
 
 Rename the config file, located in the app directory, from `config-sample.inc.php` to `config.inc.php` and add your Flickr API key/secret, as well as the User and Collection ID.
 
+The `app/cache/` directory must be writable by the web server. A folder permission of 755 or 777 should be sufficient.
+
 ## Examples
 
 * [Orphan Elliott](http://orphanelliott.com/)
