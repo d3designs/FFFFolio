@@ -25,6 +25,8 @@ Rename the config file, located in the app directory, from `config-sample.inc.ph
 
 ## License & Copyright
 
+Files located under the `images/` directory are copyright Mat Hudson and can not be reused.
+
 ### FFFFolio
 
 URL: <http://github.com/jaywilliams/FFFFolio>  
