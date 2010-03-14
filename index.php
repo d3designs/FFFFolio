@@ -87,7 +87,8 @@ $folio = new FFFFolio;
 
 
 <div id="content">
-	
+
+<?php if (isset($folio->set->title)): ?>
 	<div id="project">
 		<h2><a href="http://www.flickr.com/photos/<?php echo $folio->set->owner; ?>/sets/<?php echo $folio->set->id; ?>/"><?php echo $folio->entities($folio->set->title); ?></a></h2>
 		<div class="description"><?php echo nl2br($folio->set->description); ?></div>
@@ -102,6 +103,7 @@ $folio = new FFFFolio;
 		</div>
 <?php endforeach ?>
 	</div>
+<?php endif ?>
 
 </div> <!-- End Content -->
 
