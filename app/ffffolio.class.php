@@ -57,17 +57,22 @@ class FFFFolio
 		if (isset($this->set))
 			return $this->set;
 		
+		if (empty($this->page)) {
+			$this->set = (object) null;
+			return false;
+		}
+		
 		$response = $this->api->photosets->get_info(array(
 			'photoset_id' => $this->page,
 		));
 		
 		if(!property_exists($response,'photoset'))
 		{
-			$this->set = null;
+			$this->set = (object) null;
 			return false;
 		}
 		
-		$this->set = $response->photoset;
+		$this->set = (object) $response->photoset;
 		
 		foreach ($this->set as &$value)
 		{
@@ -86,18 +91,23 @@ class FFFFolio
 		if (isset($this->photos))
 			return $this->photos;
 		
+		if (empty($this->page)) {
+			$this->photos = array();
+			return false;
+		}
+		
 		$response = $this->api->photosets->get_photos(array(
 			'photoset_id' => $this->page,
 			'extras'      => 'path_alias,url_m',
 		));
 		
-		if(!property_exists($response->photoset,'photo'))
+		if(!isset($response->photoset) || !property_exists($response->photoset,'photo'))
 		{
-			$this->photos = null;
+			$this->photos = array();
 			return false;
 		}
 		
-		$this->photos = $response->photoset->photo;
+		$this->photos = (array) $response->photoset->photo;
 
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;

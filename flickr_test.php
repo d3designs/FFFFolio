@@ -8,7 +8,6 @@ include 'app/flickr.class.php';
 include 'app/flickrcache.class.php';
 include 'app/ffffolio.class.php';
 
-
 $folio = new FFFFolio;
 // var_dump($folio);
 
@@ -30,6 +29,8 @@ echo "</ul>";
 
 echo "<h2>{$folio->set->title}</h2>";
 echo "<div>{$folio->set->description}</div>";
+
+var_dump($folio->photos);
 
 echo "<div id=\"content\">\n";
 foreach ($folio->photos as $photo) {
