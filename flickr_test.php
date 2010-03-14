@@ -8,12 +8,12 @@ include 'app/flickr.class.php';
 include 'app/flickrcache.class.php';
 
 /**
-* My Flickr Folio
-*/
-class Folio
+ * FFFFolio
+ * Fantastic no-Frills Flickr Folio
+ */
+class FFFFolio
 {
 	var $api;
-	var $tree;
 	var $set_lookup;
 	var $collection_lookup;
 	var $page;
@@ -45,10 +45,69 @@ class Folio
 				$this->page = key($this->collection_lookup[$this->page]);
 		}
 		
+		$this->get_info();
+		$this->get_photos();
+		
+	}
+
+	public function get_info()
+	{
+		if (isset($this->info))
+			return $this->info;
+		
+		$response = $this->api->photosets->get_info(array(
+			'photoset_id' => $this->page,
+		));
+		
+		if(!property_exists($response,'photoset'))
+		{
+			$this->info = null;
+			return false;
+		}
+		
+		$this->info = $response->photoset;
+		
+		foreach ($this->info as &$value)
+		{
+			if (is_object($value) && property_exists($value,'_content'))
+				$value = $value->_content;
+		}
+		
+		if (isset($response->_cached))
+			$this->cached = (bool) $response->_cached;
+		
+		return $this->info;
+	}
+
+	public function get_photos()
+	{
+		if (isset($this->photos))
+			return $this->photos;
+		
+		$response = $this->api->photosets->get_photos(array(
+			'photoset_id' => $this->page,
+			'extras'      => 'path_alias,url_m',
+		));
+		
+		if(!property_exists($response->photoset,'photo'))
+		{
+			$this->photos = null;
+			return false;
+		}
+		
+		$this->photos = $response->photoset->photo;
+
+		if (isset($response->_cached))
+			$this->cached = (bool) $response->_cached;
+		
+		return $this->photos;
 	}
 	
 	public function get_tree()
 	{
+		if (isset($this->tree))
+			return $this->tree;
+		
 		$response = $this->api->collections->get_tree(array(
 			'collection_id' => $this->collection_id,
 			'user_id'       => $this->user_id,
@@ -65,7 +124,7 @@ class Folio
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;
 		
-		return true;
+		return $this->tree;
 	}
 	
 	public function get_set_lookup($tree=false, $parent=array())
@@ -201,7 +260,7 @@ class Folio
 }
 
 
-$folio = new Folio;
+$folio = new FFFFolio;
 // var_dump($folio);
 
 ?>
@@ -213,8 +272,23 @@ $folio = new Folio;
 	
 <?php
 
+echo "<h1>{$folio->tree->title}</h1>";
+echo "<div>{$folio->tree->description}</div>";
+
 echo "<ul id=\"nav\">\n";
 echo $folio->get_menu();
 echo "</ul>";
+
+echo "<h2>{$folio->info->title}</h2>";
+echo "<div>{$folio->info->description}</div>";
+
+echo "<div id=\"content\">\n";
+foreach ($folio->photos as $photo) {
+	echo "<p>";
+	echo "<img src=\"$photo->url_m\"/><br/>";
+	// var_dump($photo);
+	echo "$photo->title</p>";
+}
+echo "</div>";
 
 ?>
