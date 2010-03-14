@@ -52,8 +52,8 @@ class FFFFolio
 
 	public function get_info()
 	{
-		if (isset($this->info))
-			return $this->info;
+		if (isset($this->set))
+			return $this->set;
 		
 		$response = $this->api->photosets->get_info(array(
 			'photoset_id' => $this->page,
@@ -61,13 +61,13 @@ class FFFFolio
 		
 		if(!property_exists($response,'photoset'))
 		{
-			$this->info = null;
+			$this->set = null;
 			return false;
 		}
 		
-		$this->info = $response->photoset;
+		$this->set = $response->photoset;
 		
-		foreach ($this->info as &$value)
+		foreach ($this->set as &$value)
 		{
 			if (is_object($value) && property_exists($value,'_content'))
 				$value = $value->_content;
@@ -76,7 +76,7 @@ class FFFFolio
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;
 		
-		return $this->info;
+		return $this->set;
 	}
 
 	public function get_photos()
@@ -105,26 +105,26 @@ class FFFFolio
 	
 	public function get_tree()
 	{
-		if (isset($this->tree))
-			return $this->tree;
+		if (isset($this->collection))
+			return $this->collection;
 		
 		$response = $this->api->collections->get_tree(array(
 			'collection_id' => $this->collection_id,
 			'user_id'       => $this->user_id,
 		));
 		
-		$this->tree = $response->collections->collection[0];
+		$this->collection = $response->collections->collection[0];
 		
-		if(!property_exists($this->tree,'collection') && !property_exists($this->tree,'set'))
+		if(!property_exists($this->collection,'collection') && !property_exists($this->collection,'set'))
 		{
-			$this->tree = null;
+			$this->collection = null;
 			return false;
 		}
 		
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;
 		
-		return $this->tree;
+		return $this->collection;
 	}
 	
 	public function get_set_lookup($tree=false, $parent=array())
@@ -133,7 +133,7 @@ class FFFFolio
 			// Try to load cache if tree is false, and parent is empty
 		}
 		
-		if (!$tree) $tree = & $this->tree;
+		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
 		
 		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
@@ -163,7 +163,7 @@ class FFFFolio
 			// Try to load cache if tree is false
 		}
 		
-		if (!$tree) $tree = & $this->tree;
+		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
 		
 		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
@@ -187,7 +187,7 @@ class FFFFolio
 
 	public function get_menu($tree=false, $level=0)
 	{
-		if (!$tree) $tree = & $this->tree;
+		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
 		$output   = '';
 		$tab      = '';
@@ -272,15 +272,15 @@ $folio = new FFFFolio;
 	
 <?php
 
-echo "<h1>{$folio->tree->title}</h1>";
-echo "<div>{$folio->tree->description}</div>";
+echo "<h1>{$folio->collection->title}</h1>";
+echo "<div>{$folio->collection->description}</div>";
 
 echo "<ul id=\"nav\">\n";
 echo $folio->get_menu();
 echo "</ul>";
 
-echo "<h2>{$folio->info->title}</h2>";
-echo "<div>{$folio->info->description}</div>";
+echo "<h2>{$folio->set->title}</h2>";
+echo "<div>{$folio->set->description}</div>";
 
 echo "<div id=\"content\">\n";
 foreach ($folio->photos as $photo) {
