@@ -3,8 +3,8 @@
  * Include FFFFolio Application
  */
 
-// Disable Error Reporting when development is finished
-// error_reporting(0);
+if (!file_exists('app/config.inc.php'))
+	die('Please setup config.inc.php before proceeding.');
 
 require_once 'app/config.inc.php';
 require_once 'app/void.class.php';
@@ -34,7 +34,7 @@ $folio = new FFFFolio;
 	<script src="js/ie.js" type="text/javascript" charset="utf-8"></script>
 	<![endif]-->
 	
-	<script src="js/mootools-1.2.4-core-yc.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/mootools-1.2.4-core-yc-lite.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/mootools-1.2.4.4-more-yc.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/scroller.js" type="text/javascript" charset="utf-8"></script>
 

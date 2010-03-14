@@ -7,6 +7,13 @@
  */
 
 /**
+ * Default Timezone & Error Reporting
+ */
+date_default_timezone_set('America/Los_Angeles');
+error_reporting(0);
+// error_reporting(E_ALL|E_STRICT); // Enable when developing
+
+/**
  * Constant: FLICKR_KEY
  * 	Flickr API Key. <http://www.flickr.com/services/api/keys/>
  */
