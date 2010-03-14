@@ -3,6 +3,9 @@
  * Include FFFFolio Application
  */
 
+// Disable Error Reporting when development is finished
+// error_reporting(0);
+
 require_once 'app/config.inc.php';
 require_once 'app/void.class.php';
 require_once 'app/requestcore.class.php';

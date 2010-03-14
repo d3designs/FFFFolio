@@ -22,11 +22,8 @@ class FFFFolio
 	var $page;
 	var $cached;
 	
-	// var $key = FLICKR_KEY;
-	// var $secret_key = FLICKR_SECRET_KEY;
 	var $user_id = FLICKR_USER_ID;
 	var $collection_id = FLICKR_COLLECTION_ID;
-	
 	
 	function __construct()
 	{
@@ -38,8 +35,8 @@ class FFFFolio
 		// Make sure this folder is writable (755 or 777).
 		$cache_path   = realpath(dirname(__FILE__).'/cache').'/';
 		
-		// 7200 Seconds = 2 Hours
-		$cache_length = 7200;
+		// 21600 Seconds = 6 Hours
+		$cache_length = 21600;
 		
 		$this->api->cache_mode(true, $cache_length, $cache_path);
 		
@@ -164,6 +161,11 @@ class FFFFolio
 			'collection_id' => $this->collection_id,
 			'user_id'       => $this->user_id,
 		));
+		
+		if (empty($response) || $response->stat != 'ok') {
+			$this->collection = new Void;
+			return false;
+		}
 		
 		$this->collection = $response->collections->collection[0];
 		

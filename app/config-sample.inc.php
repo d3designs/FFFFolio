@@ -1,18 +1,10 @@
 <?php
 /**
- * File: Configuration
- * 	Stores your Flickr API information. Add your account information, then rename this file to 'config.inc.php'.
- *
- * Version:
- * 	2009.11.14
- *
- * Copyright:
- * 	2009 Ryan Parman
- *
- * License:
- * 	Simplified BSD License - http://opensource.org/licenses/bsd-license.php
+ * File: FFFFolio Configuration
+ * 	Fantastic no-Frills Flickr Folio Configuration
+ * 
+ * Fill out this configuration file, and rename it to "config.inc.php".
  */
-
 
 /**
  * Constant: FLICKR_KEY
@@ -36,6 +28,6 @@ define('FLICKR_USER_ID', '');
 
 /**
  * Constant: FLICKR_COLLECTION_ID
- * 	Flickr Collection ID, which has all the content
+ * 	Flickr Collection ID, which contains the content to be displayed
  */
 define('FLICKR_COLLECTION_ID', '');
