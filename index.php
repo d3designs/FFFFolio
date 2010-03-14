@@ -21,11 +21,7 @@ $folio = new FFFFolio;
 	<title><?php if(isset($folio->set->title)) echo $folio->entities($folio->set->title) . ' — '; ?><?php echo $folio->entities($folio->collection->title); ?></title>
 	
 	<base href="<?php echo $folio->path; ?>"/>
-	
-	<?php if (isset($folio->set->title)): ?>
-	<link rel="alternate" type="application/rss+xml" title="<?php echo $folio->entities($folio->set->title); ?> - RSS" href="http://api.flickr.com/services/feeds/photoset.gne?set=<?php echo $folio->set->id ?>&amp;nsid=<?php echo $folio->user_id; ?>&amp;lang=en-us&amp;format=rss_200"/>
-	<?php endif ?>
-	
+		
 	<link rel="stylesheet" href="css/reset.css" type="text/css" media="all"/>
 	<link rel="stylesheet" href="css/text.css" type="text/css" media="all"/>
 	<link rel="stylesheet" href="css/layout.css" type="text/css" media="all"/>
@@ -38,6 +34,10 @@ $folio = new FFFFolio;
 	<script src="js/mootools-1.2.4-core-yc.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/mootools-1.2.4.4-more-yc.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/scroller.js" type="text/javascript" charset="utf-8"></script>
+
+<?php if (isset($folio->set->title)): ?>
+	<link rel="alternate" type="application/rss+xml" title="<?php echo $folio->entities($folio->set->title); ?> - RSS" href="http://api.flickr.com/services/feeds/photoset.gne?set=<?php echo $folio->set->id ?>&amp;nsid=<?php echo $folio->user_id; ?>&amp;lang=en-us&amp;format=rss_200"/>
+<?php endif ?>
 
 	<!-- 
         This site was lovingly created by: D3 <www.myd3.com>

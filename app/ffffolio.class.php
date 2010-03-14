@@ -33,7 +33,15 @@ class FFFFolio
 		$this->path = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
 		
 		$this->api = new FlickrCache();
-		$this->api->cache_mode(true, 6400, './app/cache/');
+		
+		// Cache API Requests in the /app/cache/ directory
+		// Make sure this folder is writable (755 or 777).
+		$cache_path   = realpath(dirname(__FILE__).'/cache').'/';
+		
+		// 7200 Seconds = 2 Hours
+		$cache_length = 7200;
+		
+		$this->api->cache_mode(true, $cache_length, $cache_path);
 		
 		$this->get_tree();
 		$this->get_set_lookup();
@@ -173,10 +181,6 @@ class FFFFolio
 	
 	public function get_set_lookup($tree=false, $parent=array())
 	{
-		if ($this->cached) {
-			// Try to load cache if tree is false, and parent is empty
-		}
-		
 		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
 		
@@ -196,17 +200,11 @@ class FFFFolio
 				$this->set_lookup[$set->id] = $parent;
 		}
 		
-		// Save Cache if tree is false parent is empty
-		
 		return true;
 	}
 
 	public function get_collection_lookup($tree=false)
 	{
-		if ($this->cached) {
-			// Try to load cache if tree is false
-		}
-		
 		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
 		
@@ -223,8 +221,6 @@ class FFFFolio
 			foreach ($tree->set as $set)
 				$this->collection_lookup[$tree->id][$set->id] = true;
 		}
-		
-		// Save Cache if tree is false
 		
 		return true;
 	}	
