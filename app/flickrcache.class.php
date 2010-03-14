@@ -7,7 +7,7 @@
  * 	2009.12.13
  *
  * Copyright:
- * 	2009 Jay Williams
+ * 	2009 Jay Williams - http://myd3.com/
  *
  * License:
  * 	Simplified BSD License - http://opensource.org/licenses/bsd-license.php

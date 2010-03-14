@@ -7,10 +7,10 @@
  * 	2010.03.14
  *
  * Copyright:
- * 	2010 Jay Williams
+ * 	2010 Jay Williams - http://myd3.com/
  *
  * License:
- * 	Simplified BSD License - http://opensource.org/licenses/bsd-license.php
+ * 	MIT-style License - http://www.opensource.org/licenses/mit-license.php
  */
 
 class FFFFolio
