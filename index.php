@@ -95,6 +95,9 @@ $folio = new FFFFolio;
 	</div>
 	
 	<div id="items">
+<?php
+	// Display photos in reverse order
+	$folio->photos = array_reverse($folio->photos); ?>
 <?php foreach ($folio->photos as $photo): ?>
 		<div class="item" id="item_<?php echo $photo->id; ?>">
 			<a href="http://www.flickr.com/photos/<?php echo $photo->pathalias; ?>/<?php echo $photo->id; ?>/in/set-<?php echo $folio->set->id; ?>/">
