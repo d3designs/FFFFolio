@@ -2,7 +2,9 @@
 /**
  * Include FFFFolio Application
  */
+
 require_once 'app/config.inc.php';
+require_once 'app/void.class.php';
 require_once 'app/requestcore.class.php';
 require_once 'app/flickr.class.php';
 require_once 'app/flickrcache.class.php';
@@ -16,11 +18,11 @@ $folio = new FFFFolio;
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title><?php echo $folio->collection->title; ?></title>
+	<title><?php if(isset($folio->set->title)) echo $folio->entities($folio->set->title) . ' — '; ?><?php echo $folio->entities($folio->collection->title); ?></title>
 	
 	<!-- <base href="/"/> -->
 	
-	<!-- <link rel="alternate" type="application/rss+xml" title="News" href="http://example.com/rss"/> -->
+	<link rel="alternate" type="application/rss+xml" title="<?php echo $folio->entities($folio->set->title); ?>" href="http://api.flickr.com/services/feeds/photoset.gne?set=<?php echo $folio->set->id ?>&amp;nsid=<?php echo $folio->user_id; ?>&amp;lang=en-us&amp;format=rss_200"/>
 	
 	<link rel="stylesheet" href="css/reset.css" type="text/css" media="all"/>
 	<link rel="stylesheet" href="css/text.css" type="text/css" media="all"/>
@@ -74,7 +76,7 @@ $folio = new FFFFolio;
 		Use <span title="or J/K if you prefer">arrow keys</span><br/> to navigate<br/><br/>
 		
 		<img src="images/oe.png" width="18" height="11" alt="OE"/><br/>
-		© 2010 Mat Hudson
+		© <?php echo date('Y'); ?> Mat Hudson
 	</div>
 	
 </div> <!-- End Sidebar -->
@@ -84,8 +86,8 @@ $folio = new FFFFolio;
 <div id="content">
 	
 	<div id="project">
-		<h2><?php echo $folio->set->title; ?></h2>
-		<div class="description"><?php echo $folio->set->description; ?></div>
+		<h2><a href="http://www.flickr.com/photos/<?php echo $folio->set->owner; ?>/sets/<?php echo $folio->set->id; ?>/"><?php echo $folio->entities($folio->set->title); ?></a></h2>
+		<div class="description"><?php echo nl2br($folio->set->description); ?></div>
 	</div>
 
 	
@@ -93,8 +95,8 @@ $folio = new FFFFolio;
 		
 		<?php foreach ($folio->photos as $photo): ?>
 		<div class="item" id="item_<?php echo $photo->id; ?>">
-			<a href="http://www.flickr.com/photos/<?php echo $photo->pathalias; ?>/<?php echo $photo->id; ?>/">
-				<img src="<?php echo $photo->url_m; ?>" width="<?php echo $photo->width_m; ?>" height="<?php echo $photo->height_m; ?>" alt="<?php echo $photo->title; ?>" title="<?php echo $photo->title; ?>"/>
+			<a href="http://www.flickr.com/photos/<?php echo $photo->pathalias; ?>/<?php echo $photo->id; ?>/in/set-<?php echo $folio->set->id; ?>/">
+				<img src="<?php echo $photo->url_m; ?>" width="<?php echo $photo->width_m; ?>" height="<?php echo $photo->height_m; ?>" alt="<?php echo $folio->entities($photo->title); ?>" title="<?php echo $folio->entities($photo->title); ?>"/>
 			</a>
 		</div>
 		<?php endforeach ?>
