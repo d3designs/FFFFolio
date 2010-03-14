@@ -44,16 +44,16 @@ window.addEvent('domready', function() {
 
 	document.addEvent('keydown', function(event){
 	
-		if(event.key == 'j' || event.key == 'left' ||
-			event.key == 'k' || event.key == 'right') {
+		if(event.key == 'k' || event.key == 'left' ||
+			event.key == 'j' || event.key == 'right') {
 				// Determine which image is being viewed, based off of the location on the screen.
 	
-				current = Math.ceil(window.getScroll().x / 539) - 1;
+				// current = Math.ceil(window.getScroll().x / 539) - 1;
 	
-				if (current >= items.length || current < 1) current = 0;
+				// if (current >= items.length || current < 1) current = 0;
 		}
 	
-		if(event.key == 'j' || event.key == 'left') {
+		if(event.key == 'k' || event.key == 'left') {
 			// Previous Item, Subtract 1 from Current
 	
 			current = current - 1;
@@ -64,7 +64,7 @@ window.addEvent('domready', function() {
 			event.stop();
 			return false;
 	
-		} else if (event.key == 'k' || event.key == 'right') {
+		} else if (event.key == 'j' || event.key == 'right') {
 			// Next Item, Add 1 to Current
 	
 			current = current + 1;

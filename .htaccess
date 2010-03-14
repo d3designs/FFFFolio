@@ -1,0 +1,15 @@
+Options +FollowSymLinks -Indexes
+
+<IfModule mod_rewrite.c>
+
+RewriteEngine On
+
+# Directory name
+# RewriteBase /
+
+# Secure sensitive directores and filetypes
+RewriteRule ^app/.*$ - [F,L]
+
+RewriteRule ^([0-9\-]+)(/([0-9a-z\-\_]+))?/?$ index.php?page=$1&slug=$3 [L]
+
+</IfModule>

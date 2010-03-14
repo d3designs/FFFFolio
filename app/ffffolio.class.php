@@ -15,6 +15,7 @@
 
 class FFFFolio
 {
+	var $path;
 	var $api;
 	var $set_lookup;
 	var $collection_lookup;
@@ -29,6 +30,8 @@ class FFFFolio
 	
 	function __construct()
 	{
+		$this->path = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
+		
 		$this->api = new FlickrCache();
 		$this->api->cache_mode(true, 6400, './app/cache/');
 		
@@ -51,13 +54,34 @@ class FFFFolio
 		
 		// Only load sets that are owned by the user
 		if (!empty($this->page) && $this->set->owner != $this->user_id) {
-			$this->page = null;
-			$this->set = new Void;
-			return false;
+			$this->page   = null;
+			$this->set    = new Void;
+			$this->photos = array();
+			
 		}
 		
+		$this->check_url();
 		$this->get_photos();
+	}
+	
+	public function check_url()
+	{
+		// If we are on an invalid page, output a 404 error, and go to the home page.
+		if (empty($this->page) && !empty($_GET['page'])) {
+			header($_SERVER["SERVER_PROTOCOL"].' 404 Not Found');
+			header("Location: $this->path");
+			die();
+		}
 		
+		// Verify that the post slug exists, and is set correctly.
+		if (!empty($this->page) && (empty($_GET['slug']) || $_GET['slug'] != $this->slugify($this->set->title)) ) {
+			
+			$url =  $this->path . $this->set->id . '/' . $this->slugify($this->set->title);
+			
+			header($_SERVER["SERVER_PROTOCOL"].' 301 Moved Permanently');
+			header("Location: $url");
+			die();
+		}
 	}
 
 	public function get_set_info()
@@ -228,7 +252,7 @@ class FFFFolio
 			else
 				$output .= "$tab<li class=\"collection\">";
 
-			$output .= "<a href=\"?page=$tree->id&amp;/".$this->slugify($tree->title)."\">".$this->entities($tree->title)."</a>\n";
+			$output .= "<a href=\"$tree->id/".$this->slugify($tree->title)."\">".$this->entities($tree->title)."</a>\n";
 			$output .= "$tab\t<ul>\n";
 		}
 
@@ -246,7 +270,7 @@ class FFFFolio
 				else
 					$output .= "$tab\t\t<li class=\"set\">";
 				
-				$output .= "<a href=\"?page=$set->id&amp;/".$this->slugify($set->title)."\">".$this->entities($set->title)."</a></li>\n";
+				$output .= "<a href=\"$set->id/".$this->slugify($set->title)."\">".$this->entities($set->title)."</a></li>\n";
 			}
 		}
 		

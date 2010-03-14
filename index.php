@@ -20,9 +20,11 @@ $folio = new FFFFolio;
 
 	<title><?php if(isset($folio->set->title)) echo $folio->entities($folio->set->title) . ' — '; ?><?php echo $folio->entities($folio->collection->title); ?></title>
 	
-	<!-- <base href="/"/> -->
+	<base href="<?php echo $folio->path; ?>"/>
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php echo $folio->entities($folio->set->title); ?>" href="http://api.flickr.com/services/feeds/photoset.gne?set=<?php echo $folio->set->id ?>&amp;nsid=<?php echo $folio->user_id; ?>&amp;lang=en-us&amp;format=rss_200"/>
+	<?php if (isset($folio->set->title)): ?>
+	<link rel="alternate" type="application/rss+xml" title="<?php echo $folio->entities($folio->set->title); ?> - RSS" href="http://api.flickr.com/services/feeds/photoset.gne?set=<?php echo $folio->set->id ?>&amp;nsid=<?php echo $folio->user_id; ?>&amp;lang=en-us&amp;format=rss_200"/>
+	<?php endif ?>
 	
 	<link rel="stylesheet" href="css/reset.css" type="text/css" media="all"/>
 	<link rel="stylesheet" href="css/text.css" type="text/css" media="all"/>
@@ -55,13 +57,11 @@ $folio = new FFFFolio;
 <body>
 
 <div id="sidebar">
-	<!-- <div id="header"> -->
-		<a href="./"><img src="images/logo.png" id="logo" width="165" height="98" alt="Orphan Elliott"/></a>
-		<em id="tagline"><?php echo $folio->collection->description; ?></em>
-	<!-- </div> -->
+	<a href="./"><img src="images/logo.png" id="logo" width="165" height="98" alt="Orphan Elliott"/></a>
+	<em id="tagline"><?php echo $folio->collection->description; ?></em>
 	
-	<ul id="nav"> 
-	<?php echo $folio->get_menu(); ?>
+	<ul id="nav">
+<?php echo $folio->get_menu(); ?>
 	</ul>
 	
 	<hr/>
@@ -89,18 +89,15 @@ $folio = new FFFFolio;
 		<h2><a href="http://www.flickr.com/photos/<?php echo $folio->set->owner; ?>/sets/<?php echo $folio->set->id; ?>/"><?php echo $folio->entities($folio->set->title); ?></a></h2>
 		<div class="description"><?php echo nl2br($folio->set->description); ?></div>
 	</div>
-
 	
 	<div id="items">
-		
-		<?php foreach ($folio->photos as $photo): ?>
+<?php foreach ($folio->photos as $photo): ?>
 		<div class="item" id="item_<?php echo $photo->id; ?>">
 			<a href="http://www.flickr.com/photos/<?php echo $photo->pathalias; ?>/<?php echo $photo->id; ?>/in/set-<?php echo $folio->set->id; ?>/">
 				<img src="<?php echo $photo->url_m; ?>" width="<?php echo $photo->width_m; ?>" height="<?php echo $photo->height_m; ?>" alt="<?php echo $folio->entities($photo->title); ?>" title="<?php echo $folio->entities($photo->title); ?>"/>
 			</a>
 		</div>
-		<?php endforeach ?>
-	
+<?php endforeach ?>
 	</div>
 
 </div> <!-- End Content -->
