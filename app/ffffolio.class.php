@@ -22,6 +22,7 @@ class FFFFolio
 	var $page;
 	var $cached;
 	
+	var $cache_time = FLICKR_CACHE_TIME;
 	var $user_id = FLICKR_USER_ID;
 	var $collection_id = FLICKR_COLLECTION_ID;
 	
@@ -36,11 +37,10 @@ class FFFFolio
 		// Make sure this folder is writable (755 or 777).
 		$cache_path   = realpath(dirname(__FILE__).'/cache').'/';
 		
-		// 21600 Seconds = 6 Hours
-		$cache_length = 21600;
-		
-		$this->api->cache_mode(true, $cache_length, $cache_path);
-		
+		if($this->cache_time > 0){
+			$this->api->cache_mode(true, $this->cache_time, $cache_path);
+		}
+
 		$this->get_tree();
 		$this->get_set_lookup();
 		
