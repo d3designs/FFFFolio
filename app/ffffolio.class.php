@@ -84,7 +84,12 @@ class FFFFolio
 			
 			$url =  $this->path . $this->set->id . '/' . $this->slugify($this->set->title);
 			
-			header($_SERVER["SERVER_PROTOCOL"].' 301 Moved Permanently');
+			// Only temporarily redirect Collections to Sets
+			if (isset($_GET['page']) && strpos($_GET['page'], '-'))
+				header($_SERVER["SERVER_PROTOCOL"].' 302 Found');
+			else
+				header($_SERVER["SERVER_PROTOCOL"].' 301 Moved Permanently');
+				
 			header("Location: $url");
 			die();
 		}
