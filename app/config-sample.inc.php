@@ -46,3 +46,10 @@ define('FLICKR_USER_ID', '');
  * 	Flickr Collection ID, which contains the content to be displayed
  */
 define('FLICKR_COLLECTION_ID', '');
+
+/**
+ * Constant: FLICKR_COLLECTION_HOME
+ * 	Treat the first set inside the first collection as the "Home Page",
+ * 	and display that by default, while not listing it in the menu.
+ */
+define('FLICKR_COLLECTION_HOME', false);

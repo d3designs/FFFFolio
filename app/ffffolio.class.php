@@ -21,32 +21,42 @@ class FFFFolio
 	var $collection_lookup;
 	var $page;
 	var $cached;
-	
+	var $home;
+
 	var $cache_time = FLICKR_CACHE_TIME;
 	var $user_id = FLICKR_USER_ID;
 	var $collection_id = FLICKR_COLLECTION_ID;
-	
+
 	function __construct()
 	{
 		$this->path = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
 		$this->path = rtrim($this->path,'/') . '/';
-		
+
 		$this->api = new FlickrCache();
-		
+
 		// Cache API Requests in the /app/cache/ directory
 		// Make sure this folder is writable (755 or 777).
 		$cache_path   = realpath(dirname(__FILE__).'/cache').'/';
-		
+
 		if($this->cache_time > 0){
 			$this->api->cache_mode(true, $this->cache_time, $cache_path);
 		}
 
 		$this->get_tree();
 		$this->get_set_lookup();
-		
+
 		if (isset($_GET['page']))
 			$this->page = preg_replace('/[^0-9\-]/', '', $_GET['page']);
-		
+
+		// If no page is specfied, load the first collection (aka the home page)
+		if (defined('FLICKR_COLLECTION_HOME') && FLICKR_COLLECTION_HOME && empty($this->page))
+		{
+			// Load Home page (first collection)
+			$this->home = true;
+			$this->get_collection_lookup();
+			$this->page = key(reset($this->collection_lookup));
+		}
+
 		// If the page contains a dash, it is a collection,
 		// so we can grab the first set under that collection.
 		if (strpos($this->page, '-'))
@@ -55,21 +65,21 @@ class FFFFolio
 			if (isset($this->collection_lookup[$this->page]))
 				$this->page = key($this->collection_lookup[$this->page]);
 		}
-		
+
 		$this->get_set_info();
-		
+
 		// Only load sets that are owned by the user
 		if (!empty($this->page) && $this->set->owner != $this->user_id) {
 			$this->page   = null;
 			$this->set    = new Void;
 			$this->photos = array();
-			
+
 		}
-		
+
 		$this->check_url();
 		$this->get_photos();
 	}
-	
+
 	public function check_url()
 	{
 		// If we are on an invalid page, output a 404 error, and go to the home page.
@@ -78,18 +88,18 @@ class FFFFolio
 			header("Location: $this->path");
 			die();
 		}
-		
+
 		// Verify that the post slug exists, and is set correctly.
-		if (!empty($this->page) && (empty($_GET['slug']) || $_GET['slug'] != $this->slugify($this->set->title)) ) {
-			
+		if (!empty($this->page) && !$this->home && (empty($_GET['slug']) || $_GET['slug'] != $this->slugify($this->set->title)) ) {
+
 			$url =  $this->path . $this->set->id . '/' . $this->slugify($this->set->title);
-			
+
 			// Only temporarily redirect Collections to Sets
 			if (isset($_GET['page']) && strpos($_GET['page'], '-'))
 				header($_SERVER["SERVER_PROTOCOL"].' 302 Found');
 			else
 				header($_SERVER["SERVER_PROTOCOL"].' 301 Moved Permanently');
-				
+
 			header("Location: $url");
 			die();
 		}
@@ -99,33 +109,33 @@ class FFFFolio
 	{
 		if (isset($this->set))
 			return $this->set;
-		
+
 		if (empty($this->page)) {
 			$this->set = new Void;;
 			return false;
 		}
-		
+
 		$response = $this->api->photosets->get_info(array(
 			'photoset_id' => $this->page,
 		));
-		
+
 		if(!property_exists($response,'photoset'))
 		{
 			$this->set = new Void;
 			return false;
 		}
-		
+
 		$this->set = (object) $response->photoset;
-		
+
 		foreach ($this->set as &$value)
 		{
 			if (is_object($value) && property_exists($value,'_content'))
 				$value = $value->_content;
 		}
-		
+
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;
-		
+
 		return $this->set;
 	}
 
@@ -133,70 +143,70 @@ class FFFFolio
 	{
 		if (isset($this->photos))
 			return $this->photos;
-		
+
 		if (empty($this->page)) {
 			$this->photos = array();
 			return false;
 		}
-		
+
 		$response = $this->api->photosets->get_photos(array(
 			'photoset_id' => $this->page,
 			'extras'      => 'path_alias,url_m',
 		));
-		
+
 		if(!isset($response->photoset) || !property_exists($response->photoset,'photo'))
 		{
 			$this->photos = array();
 			return false;
 		}
-		
+
 		$this->photos = (array) $response->photoset->photo;
 
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;
-		
+
 		return $this->photos;
 	}
-	
+
 	public function get_tree()
 	{
 		if (isset($this->collection))
 			return $this->collection;
-		
+
 		$response = $this->api->collections->get_tree(array(
 			'collection_id' => $this->collection_id,
 			'user_id'       => $this->user_id,
 		));
-		
+
 		if (empty($response) || $response->stat != 'ok') {
 			$this->collection = new Void;
 			return false;
 		}
-		
+
 		$this->collection = $response->collections->collection[0];
-		
+
 		if(!property_exists($this->collection,'collection') && !property_exists($this->collection,'set'))
 		{
 			$this->collection = new Void;
 			return false;
 		}
-		
+
 		if (isset($response->_cached))
 			$this->cached = (bool) $response->_cached;
-		
+
 		return $this->collection;
 	}
-	
+
 	public function get_set_lookup($tree=false, $parent=array())
 	{
 		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
-		
+
 		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
 			return false;
-		
+
 		$parent[$tree->id] = true;
-		
+
 		if (property_exists($tree,'collection'))
 		{
 			foreach ($tree->collection as $collection)
@@ -207,7 +217,7 @@ class FFFFolio
 			foreach ($tree->set as $set)
 				$this->set_lookup[$set->id] = $parent;
 		}
-		
+
 		return true;
 	}
 
@@ -215,7 +225,7 @@ class FFFFolio
 	{
 		if (!$tree) $tree = & $this->collection;
 		$function = __FUNCTION__;
-		
+
 		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
 			return false;
 
@@ -229,9 +239,9 @@ class FFFFolio
 			foreach ($tree->set as $set)
 				$this->collection_lookup[$tree->id][$set->id] = true;
 		}
-		
+
 		return true;
-	}	
+	}
 
 	public function get_menu($tree=false, $level=0)
 	{
@@ -240,14 +250,14 @@ class FFFFolio
 		$output   = '';
 		$tab      = '';
 		$level++;
-		
+
 		if(!is_object($tree) || (!property_exists($tree,'collection') && !property_exists($tree,'set')))
 			return false;
-		
+
 		// Add a tab for every level we go down
 		for ($i=1; $i < $level; $i++)
 			$tab .= "\t";
-		
+
 		// Skip the parent collection
 		if ($level > 1 || property_exists($tree,'set'))
 		{
@@ -262,6 +272,10 @@ class FFFFolio
 
 		if (property_exists($tree,'collection'))
 		{
+			// If home mode is enabled, don't show the first collection in the menu.
+			if($level == 1 && defined('FLICKR_COLLECTION_HOME') && FLICKR_COLLECTION_HOME)
+				array_shift($tree->collection);
+
 			foreach ($tree->collection as $collection)
 				 $output .= $this->$function($collection, $level);
 		}
@@ -273,41 +287,41 @@ class FFFFolio
 					$output .= "$tab\t\t<li class=\"set active\">";
 				else
 					$output .= "$tab\t\t<li class=\"set\">";
-				
+
 				$output .= "<a href=\"$set->id/".$this->slugify($set->title)."\">".$this->entities($set->title)."</a></li>\n";
 			}
 		}
-		
+
 		// Skip the parent collection
 		if ($level > 1 || property_exists($tree,'set'))
 		{
 			$output .= "$tab\t</ul>\n";
 			$output .= "$tab</li>\n";
 		}
-		
+
 		return $output;
 	}
-	
+
 	public function entities($value='')
 	{
 		return htmlentities($value,ENT_QUOTES,'UTF-8');
 	}
-	
+
 	public function slugify($value='')
 	{
 		$find = $replace = array();
-		
+
 		$find[] = '/[\/\-\_& ]+/';
 		$replace[] = '-';
-		
+
 		$find[] = '/[^0-9a-z\-\_]/';
 		$replace[] = '';
-		
+
 		$find[] = '/\-+/';
 		$replace[] = '-';
-		
+
 		return preg_replace($find, $replace, strtolower($value));
 	}
-	
-	
+
+
 }

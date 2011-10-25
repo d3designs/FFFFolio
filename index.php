@@ -21,7 +21,7 @@ $folio = new FFFFolio;
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title><?php if(isset($folio->set->title)) echo $folio->entities($folio->set->title) . ' — '; ?><?php echo $folio->entities($folio->collection->title); ?></title>
+	<title><?php if(!$folio->home && isset($folio->set->title)) echo $folio->entities($folio->set->title) . ' — '; ?><?php echo $folio->entities($folio->collection->title); ?></title>
 	
 	<base href="<?php echo $folio->path; ?>"/>
 		
