@@ -17,9 +17,9 @@ Initial installation does require some knowledge of HTML, PHP, and Flickr. After
 
 ## Download
 
-You can download the source code in a [ZIP Archive](http://github.com/jaywilliams/FFFFolio/zipball/master), or clone the project using Git:
+You can download the source code in a [ZIP Archive](http://github.com/d3designs/FFFFolio/zipball/master), or clone the project using Git:
 
-	git clone git@github.com:jaywilliams/FFFFolio.git
+	git clone git@github.com:d3designs/FFFFolio.git
 	cd FFFFolio
 
 ## Setup
@@ -32,7 +32,7 @@ By default, all Flickr API calls are cached for 6 hours, this can be changed in 
 
 ## Examples
 
-* [Orphan Elliott](http://orphanelliott.com/)
+* [Orphan Elliott](http://theorphanelliott.com/)
 	* Powered by this [Flickr Collection](http://www.flickr.com/photos/prismkiller/collections/72157623399341629/) 
 
 ## License & Copyright
@@ -41,7 +41,7 @@ Files located under the `images/` directory are copyright Mat Hudson and can not
 
 ### FFFFolio
 
-URL: <http://github.com/jaywilliams/FFFFolio>  
+URL: <http://github.com/d3designs/FFFFolio>  
 Copyright (c) 2010, Jay Williams [MIT-style License](http://www.opensource.org/licenses/mit-license.php)
 
 ### MooTools
@@ -56,7 +56,7 @@ Copyright (c) 2009, Ryan Parman [Simplified BSD License](http://opensource.org/l
 
 ### FlickrCache Class
 
-URL: <http://github.com/jaywilliams/flickr>  
+URL: <http://github.com/d3designs/flickr>  
 Copyright (c) 2009, Jay Williams [Simplified BSD License](http://opensource.org/licenses/bsd-license.php)
 
 ### RequestCore Class
